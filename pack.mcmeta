@@ -1,6 +1,8 @@
 {
   "pack": {
     "description": "Seb's Server Main Data Pack",
-    "pack_format": 81
+    "pack_format": 81,
+    "min_format": 81,
+    "max_format": 88
   }
 }

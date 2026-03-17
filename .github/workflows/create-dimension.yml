@@ -1,0 +1,73 @@
+name: Create new dimension
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'New dimension filename (without .json). Only the filename, no slashes.'
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  create-dimension:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create new dimension.json (template)
+        env:
+          NAME: ${{ github.event.inputs.name }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${NAME}" ]; then
+            echo "Input 'name' is empty."
+            exit 1
+          fi
+
+          # Disallow path separators to avoid writing outside the target directory
+          if printf '%s' "$NAME" | grep -q '/'; then
+            echo "Invalid name: must not contain '/'"
+            exit 1
+          fi
+
+          DIR="data/sebspack/dimension"
+          TARGET="$DIR/${NAME}.json"
+
+          if [ -e "$TARGET" ]; then
+            echo "Target file already exists: $TARGET"
+            exit 1
+          fi
+
+          mkdir -p "$DIR"
+
+          # Write the requested template (no copying)
+          cat > "$TARGET" <<'JSON'
+{
+  "type": "minecraft:overworld",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "minecraft:desert",
+      "lakes": false,
+      "features": false,
+      "layers": [],
+      "structure_overrides": []
+    }
+  }
+}
+JSON
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git status --porcelain | grep -q .; then
+            git add "$TARGET"
+            git commit -m "Create dimension: ${TARGET}"
+            git push
+            echo "Created and pushed $TARGET"
+          else
+            echo "No changes to commit."
+          fi

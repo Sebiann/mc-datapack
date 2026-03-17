@@ -19,6 +19,20 @@ jobs:
       - name: Create new dimension.json (template)
         env:
           NAME: ${{ github.event.inputs.name }}
+          TEMPLATE: |
+            {
+              "type": "minecraft:overworld",
+              "generator": {
+                "type": "minecraft:flat",
+                "settings": {
+                  "biome": "minecraft:desert",
+                  "lakes": false,
+                  "features": false,
+                  "layers": [],
+                  "structure_overrides": []
+                }
+              }
+            }
         run: |
           set -euo pipefail
 
@@ -44,21 +58,7 @@ jobs:
           mkdir -p "$DIR"
 
           # Write the requested template (no copying)
-          cat > "$TARGET" <<'JSON'
-{
-  "type": "minecraft:overworld",
-  "generator": {
-    "type": "minecraft:flat",
-    "settings": {
-      "biome": "minecraft:desert",
-      "lakes": false,
-      "features": false,
-      "layers": [],
-      "structure_overrides": []
-    }
-  }
-}
-JSON
+          printf '%s' "$TEMPLATE" > "$TARGET"
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

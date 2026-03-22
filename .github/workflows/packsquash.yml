@@ -1,5 +1,6 @@
 name: Optimize data pack
 on:
+  workflow_dispatch:
   push:
     branches:
       - master

@@ -3,10 +3,23 @@
   "generator": {
     "type": "minecraft:flat",
     "settings": {
-      "biome": "minecraft:desert",
-      "lakes": false,
-      "features": false,
-      "layers": [],
+      "biome": "minecraft:plains",
+      "lakes": 0,
+      "features": 0,
+      "layers": [
+        {
+          "height": 1,
+          "block": "minecraft:bedrock"
+        },
+        {
+          "height": 3,
+          "block": "minecraft:dirt"
+        },
+        {
+          "height": 1,
+          "block": "minecraft:grass_block"
+        }
+      ],
       "structure_overrides": []
     }
   }
